@@ -68,20 +68,27 @@ class ClockView: NSView {
 
 	override func draw(_ rect: NSRect) {
 		super.draw(rect)
+ 
+        
+
+        let heure = DateFormatter()
+        let calendrier = DateFormatter()
+        let date = Date()
+         
+        // US English Locale (en_US)
+        heure.locale = Locale(identifier: "fr")
+        heure.setLocalizedDateFormatFromTemplate("HH:mm") // set template after setting locale
+
+        // US English Locale (en_US)
+        calendrier.locale = Locale(identifier: "fr")
+        calendrier.setLocalizedDateFormatFromTemplate("dddd dd MMMM YYYY") // set template after setting locale
 
 		style.backgroundColor.setFill()
 		NSBezierPath.fill(bounds)
 
 		drawFaceBackground()
-		drawTicks()
-		drawNumbers()
-
-		if drawsLogo {
-			drawLogo()
-		}
-
-        drawComplications()
-		drawHands()
+        drawDate(fontSize: 0.25 , values: heure.string(from: date))
+        drawCalendar(fontSize: 0.08 , values: calendrier.string(from: date))
 	}
 
 	// MARK: - Configuration
@@ -285,7 +292,7 @@ class ClockView: NSView {
         }
     }
 
-    func drawNumbers(fontSize: CGFloat, radius: Double, values: [Int] = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    func drawNumbers(fontSize: CGFloat, radius: Double, values: [Int] = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
                      in rect: CGRect? = nil)
     {
         let rect = rect ?? clockFrame
@@ -314,7 +321,156 @@ class ClockView: NSView {
 			string.draw(in: rect)
 		}
 	}
+    func drawHours(fontSize: CGFloat,  values: [Int] = [12, 00, 0, 0],
+                     in rect: CGRect? = nil)
+    {
+       
+ 
+        let rect = rect ?? clockFrame
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let clockWidth = clockFrame.size.width
+      
+        let font = NSFont(name: "HelveticaNeue-Light", size: clockWidth * fontSize)!
 
+     
+        let d_hour = NSAttributedString(string: String(values[0]), attributes: [
+            .foregroundColor: style.minuteColor,
+            .font: font
+        ])
+
+        let stringSize_d_hour = d_hour.size()
+       
+        let rect_d_hour = CGRect(
+            x: (center.x - (2 * stringSize_d_hour.width)),
+            y: center.y,
+            width: stringSize_d_hour.width,
+            height: stringSize_d_hour.height
+        )
+
+        d_hour.draw(in: rect_d_hour)
+        
+        let dec_hour = NSAttributedString(string: String(values[1]), attributes: [
+            .foregroundColor: style.minuteColor,
+            .font: font
+        ])
+
+        let stringSize_dec_hour = dec_hour.size()
+       
+        let rect_dec_hour = CGRect(
+            x: (center.x - (stringSize_dec_hour.width)),
+            y: center.y,
+            width: stringSize_dec_hour.width,
+            height: stringSize_dec_hour.height
+        )
+
+        dec_hour.draw(in: rect_dec_hour)
+        
+        
+         let d_min = NSAttributedString(string: String(values[2]), attributes: [
+            .foregroundColor: style.minuteColor,
+            .font: font
+        ])
+
+        let stringSize_d_min = d_min.size()
+       
+        let rect_d_min = CGRect(
+            x: (center.x + (stringSize_d_min.width)),
+            y: center.y,
+            width: stringSize_d_min.width,
+            height: stringSize_d_min.height
+        )
+
+        d_min.draw(in: rect_d_min)
+        /*
+        let dec_min = NSAttributedString(string: String(values[3]), attributes: [
+            .foregroundColor: style.minuteColor,
+            .font: font
+        ])
+
+        let stringSize_dec_min = dec_min.size()
+       
+        let rect_dec_min = CGRect(
+            x: (center.x + (2 * stringSize_d_min.width)),
+            y: center.y,
+            width: stringSize_dec_min.width,
+            height: stringSize_dec_min.height
+        )
+
+        dec_min.draw(in: rect_dec_min)
+        */
+   
+      
+    }
+    
+    func drawDate(fontSize: CGFloat,  values: String = ("00:00"),
+                     in rect: CGRect? = nil)
+    {
+      
+        
+        let rect = rect ?? clockFrame
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let bottom = CGPoint(x: rect.midX, y: rect.height * 0.25)
+        let clockWidth = clockFrame.size.width
+      
+        let font = NSFont(name: "HelveticaNeue-Light", size: clockWidth * fontSize)!
+
+     
+        let d_hour = NSAttributedString(string:values, attributes: [
+            .foregroundColor: style.minuteColor,
+            .font: font
+        ])
+
+        let stringSize_d_hour = d_hour.size()
+       
+        let rect_d_hour = CGRect(
+            x: (center.x - (stringSize_d_hour.width/2)),
+            y: bottom.y,
+            width: stringSize_d_hour.width,
+            height: stringSize_d_hour.height
+        )
+
+        d_hour.draw(in: rect_d_hour)
+        
+        
+   
+     
+        
+    }
+    
+    func drawCalendar(fontSize: CGFloat,  values: String = ("00:00"),
+                     in rect: CGRect? = nil)
+    {
+      
+        
+        let rect = rect ?? clockFrame
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let bottom = CGPoint(x: rect.midX, y: rect.height * 0.2)
+        let clockWidth = clockFrame.size.width
+      
+        let font = NSFont(name: "HelveticaNeue-Light", size: (clockWidth * fontSize))!
+
+     
+        let d_hour = NSAttributedString(string:values, attributes: [
+            .foregroundColor: style.minuteColor,
+            .font: font
+        ])
+
+        let stringSize_d_hour = d_hour.size()
+       
+        let rect_d_hour = CGRect(
+            x: (center.x - (stringSize_d_hour.width/2)),
+            y: bottom.y,
+            width: stringSize_d_hour.width,
+            height: stringSize_d_hour.height
+        )
+
+        d_hour.draw(in: rect_d_hour)
+        
+        
+   
+     
+        
+    }
 	// MARK: - Private
 
 	@objc private func preferencesDidChange(_ notification: NSNotification?) {
@@ -332,3 +488,6 @@ class ClockView: NSView {
 		setNeedsDisplay(bounds)
 	}
 }
+
+
+
